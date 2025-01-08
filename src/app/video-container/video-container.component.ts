@@ -111,9 +111,9 @@ export class VideoContainerComponent implements OnInit {
                 await this.zegoService.zegoEngine.stopPlayingStream(this.activeStreamId);
               }
 
-          const remoteStream = await this.zegoService.zegoEngine.startPlayingStream(streamID);
-          const remoteView = await this.zegoService.zegoEngine.createRemoteStreamView(remoteStream);
-          this.remoteVideo.nativeElement.srcObject = remoteView;
+          const remoteStream = await this.zegoService.startPlayingStream(streamID);
+          // const remoteView = await this.zegoService.zegoEngine.createRemoteStreamView(remoteStream);
+          this.remoteVideo.nativeElement.srcObject = remoteStream;
 
           this.activeStreamId = streamID;
           console.log('Remote stream added successfully');

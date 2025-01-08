@@ -45,6 +45,20 @@ import { environment } from '../environments/environment';
   }
 
 
+  async startPlayingStream(streamID: string) {
+    try {
+      if (this.zegoEngine) {
+        const result = await this.zegoEngine.startPlayingStream(streamID); // Assuming this returns a Promise
+        return result;
+      } else {
+        console.error('Zego Engine is not initialized.');
+      }
+    } catch (error) {
+      console.error('Failed to start playing stream:', error);
+    }
+  }
+
+
   async getZegoDeviceInfo() {
     try {
   

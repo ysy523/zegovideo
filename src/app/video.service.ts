@@ -63,6 +63,7 @@ import { environment } from '../environments/environment';
 
     try {
      // Check permissions first
+     alert("user id is " + userID)
      await this.checkPermissions();
     // Login to room with proper user object
     await this.zegoEngine.loginRoom(roomID, token, {

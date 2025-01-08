@@ -1,0 +1,30 @@
+<div class="video-container">
+    <div class="header-bar">
+      <div class="room-info">
+        <span class="room-id">Room ID: {{ roomId }}</span>
+      </div>
+      <button class="leave-room-btn" (click)="leaveRoom()">
+        <svg class="exit-icon" viewBox="0 0 24 24">
+          <path d="M17 7L15.59 8.41L18.17 11H8V13H18.17L15.59 15.58L17 17L22 12L17 7Z"/>
+          <path d="M4 5H12V3H4C2.9 3 2 3.9 2 5V19C2 20.1 2.9 21 4 21H12V19H4V5Z"/>
+        </svg>
+        <span class="btn-text">Leave Room</span>
+      </button>
+    </div>
+
+  <div class="video-grid">
+    <div class="video-wrapper local-video">
+      <video  #localVideo autoplay playsinline muted></video>
+      <div class="video-overlay">
+        <span class="participant-name">You</span>
+      </div>
+    </div>
+
+    <div class="video-wrapper remote-video">
+      <video #remoteVideo autoplay playsinline></video>
+      <div class="video-overlay">
+        <span class="participant-name">Remote User</span>
+      </div>
+    </div>
+  </div>
+</div>

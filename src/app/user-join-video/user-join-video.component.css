@@ -1,0 +1,327 @@
+.video-container {
+    width: 100%;
+    min-height: 100vh;
+    background: linear-gradient(to bottom, #1a1a1a, #2d2d2d);
+    padding: clamp(0.5rem, 2vw, 1.5rem);
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1rem, 2vw, 2rem);
+  }
+  
+  .header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: clamp(0.75rem, 2vw, 1.25rem);
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .footer-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: clamp(0.75rem, 2vw, 1.25rem);
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 100;
+  }
+  
+  .room-info {
+    color: white;
+    font-size: clamp(0.875rem, 1.5vw, 1rem);
+  }
+  
+  .room-id {
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+  }
+  
+  .leave-room-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: clamp(0.5rem, 1.5vw, 1rem) clamp(1rem, 2vw, 1.5rem);
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+  }
+  
+  .leave-room-btn:hover {
+    background: #c82333;
+    transform: translateY(-1px);
+  }
+  
+  .exit-icon {
+    width: clamp(18px, 1.5vw, 24px);
+    height: clamp(18px, 1.5vw, 24px);
+    fill: currentColor;
+  }
+  
+  .video-grid {
+    flex: 1;
+    display: grid;
+    gap: clamp(0.8rem, 2vw, 1.5rem);
+    grid-template-columns: 1fr;
+    aspect-ratio: 16/9;
+  }
+  
+  .video-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .video-overlay {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    padding: 0.6rem 1.2rem;
+    background: rgba(0, 0, 0, 0.75);
+    border-radius: 8px;
+    backdrop-filter: blur(4px);
+  }
+  
+  .participant-name {
+    color: white;
+    font-size: clamp(0.875rem, 1.5vw, 1rem);
+  }
+  
+  /* 移动设备（竖屏） */
+  @media (max-width: 480px) {
+    .header-bar {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  
+    .btn-text {
+      display: none;
+    }
+  
+    .leave-room-btn {
+      padding: 0.75rem;
+    }
+    .footer-bar {
+      flex-direction: column;
+      gap: 0.5rem;
+      padding: 0.5rem;
+    }
+  }
+  
+  /* 移动设备（横屏） */
+  @media (max-height: 480px) and (orientation: landscape) {
+    .video-container {
+      padding: 0.5rem;
+    }
+  
+    .video-grid {
+      grid-template-columns: repeat(2, 1fr);
+      aspect-ratio: auto;
+      height: calc(100vh - 100px);
+    }
+  }
+  
+  /* 平板和桌面 */
+  @media (min-width: 768px) {
+    .video-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .header-bar {
+      padding: 1rem 1.5rem;
+    }
+  }
+  
+  /* 大屏幕优化 */
+  @media (min-width: 1440px) {
+    .video-container {
+      max-width: 1800px;
+      margin: 0 auto;
+    }
+  }
+  
+  /* 深色模式 */
+  @media (prefers-color-scheme: dark) {
+    .video-container {
+      background: linear-gradient(to bottom, #111111, #1a1a1a);
+    }
+  }
+  
+  /* 减少动画 */
+  @media (prefers-reduced-motion: reduce) {
+    .leave-room-btn {
+      transition: none;
+    }
+  }
+  
+  
+  /* 横屏模式优化 */
+  @media (orientation: landscape) and (max-height: 480px) {
+    .footer-bar {
+      position: static;
+      margin-top: 1rem;
+    }
+  }
+  
+  .main-container {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    background: linear-gradient(to bottom, #1a1a1a, #2d2d2d);
+  }
+  
+  .user-sidebar {
+    width: 300px;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    padding: clamp(1rem, 2vw, 1.5rem);
+    color: white;
+  }
+  
+  .user-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .user-header {
+    text-align: center;
+  }
+  
+  .avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin: 0 auto 1rem;
+    overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .user-name {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .user-status {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    background: rgba(46, 213, 115, 0.2);
+    color: #2ed573;
+  }
+  
+  .call-info {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1rem;
+  }
+  
+  .info-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .info-item:last-child {
+    border-bottom: none;
+  }
+  
+  .label {
+    color: rgba(255, 255, 255, 0.7);
+  }
+  
+  /* 调整视频容器以适应新布局 */
+  .video-container {
+    flex: 1;
+    padding: clamp(0.5rem, 2vw, 1.5rem);
+  }
+  
+  /* 响应式设计 */
+  @media (max-width: 768px) {
+    .main-container {
+      flex-direction: column-reverse;
+    }
+  
+    .user-sidebar {
+      width: 100%;
+      border-left: none;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  
+    .user-details {
+      flex-direction: row;
+      align-items: center;
+      gap: 1rem;
+    }
+  
+    .avatar {
+      width: 60px;
+      height: 60px;
+      margin: 0;
+    }
+  
+    .call-info {
+      flex: 1;
+    }
+  }
+  
+  /* 小屏幕优化 */
+  @media (max-width: 480px) {
+    .user-details {
+      flex-direction: column;
+    }
+  
+    .user-sidebar {
+      padding: 0.75rem;
+    }
+  }
+  
+  /* 横屏模式优化 */
+  @media (orientation: landscape) and (max-height: 480px) {
+    .main-container {
+      flex-direction: row;
+    }
+  
+    .user-sidebar {
+      width: 200px;
+      border-left: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: none;
+    }
+  
+    .avatar {
+      width: 50px;
+      height: 50px;
+    }
+  }

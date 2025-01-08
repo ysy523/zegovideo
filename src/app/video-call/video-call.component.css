@@ -1,161 +1,84 @@
-.video-container {
+.main-container {
   width: 100%;
-  height: 100vh;
-  background: linear-gradient(to bottom, #1a1a1a, #2d2d2d);
-  padding: clamp(0.5rem, 2vw, 1.5rem);
+  min-height: 100vh;
+  background: #EEEFF4;
+  padding-top: 0;
 }
 
-.video-grid {
-  display: grid;
-  gap: clamp(0.8rem, 2vw, 2rem);
-  height: calc(100vh - 3rem);
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr 1fr;
+.user-list-container {
+  max-width: 700px;
+  margin: 18px auto 0;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 5px 7px rgba(0, 0, 0, 0.1);
 }
 
-.video-wrapper {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  background: #000;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 
-    0 4px 20px rgba(0, 0, 0, 0.3),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.video-wrapper:hover {
-  transform: translateY(-2px);
-  box-shadow: 
-    0 8px 30px rgba(0, 0, 0, 0.4),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.2);
-}
-
-.video-wrapper::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 16px;
-  padding: 2px;
-  background: linear-gradient(
-    45deg, 
-    rgba(255, 255, 255, 0.1),
-    rgba(255, 255, 255, 0.05)
-  );
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, 
-                linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-}
-
-video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 16px;
-}
-
-.video-overlay {
-  position: absolute;
-  bottom: 1rem;
-  left: 1rem;
-  padding: 0.6rem 1.2rem;
-  background: rgba(0, 0, 0, 0.75);
-  border-radius: 8px;
-  backdrop-filter: blur(8px);
+.search-pagination-container {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  padding: 15px;
+  margin: -20px -20px 20px -20px;
+  border-radius: 12px 12px 0 0;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.participant-name {
-  color: white;
-  font-size: clamp(0.875rem, 1.5vw, 1rem);
-  font-weight: 500;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+.search-box {
+  width: 100%;
+  margin-bottom: 0;
 }
 
-@media (min-width: 768px) {
-  .video-grid {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr;
-  }
+.search-input {
+  width: 80%;
+  padding: 10px;
+  border: 2.5px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  color: black;
+  font-size: 16px;
+  transition: all 0.3s ease;
 }
 
-@media (orientation: landscape) {
-  .video-grid {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr;
-  }
-}
-
-@media (min-width: 1440px) {
-  .video-container {
-    max-width: 1800px;
-    margin: 0 auto;
-  }
-  
-  .video-wrapper {
-    border-radius: 20px;
-  }
-  
-  .video-wrapper::before {
-    border-radius: 20px;
-  }
-}
-
-/* 添加暗色主题支持 */
-@media (prefers-color-scheme: dark) {
-  .video-container {
-    background: linear-gradient(to bottom, #111111, #1a1a1a);
-  }
-}
-
-.user-list-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+.search-input:focus {
+  border-color: #4CAF50;
+  outline: none;
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .user-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  padding-top: 10px;
 }
 
 .user-card {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-  transition: transform 0.2s;
 }
 
 .user-card:hover {
   transform: translateY(-2px);
 }
 
-.user-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
 
 .user-name {
-  font-weight: 600;
   color: #2c3e50;
+  font-weight: 600;
 }
 
 .call-button {
-  background: #3498db;
+  background: #4CAF50;
   color: white;
   border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
+  padding: 8px 16px;
+  border-radius: 4px;
   cursor: pointer;
   transition: background 0.2s;
 }
@@ -164,205 +87,40 @@ video {
   background: #2980b9;
 }
 
-.user-list-container {
-  background: #fff;
-  border-radius: 12px;
-  padding: 1.5rem;
-  max-width: 750px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.leave-room-button {
-  background-color: #ff4d4f;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-.leave-room-button:hover {
-  background-color: #d9363e;
-}
-
-@media (max-width: 480px) {
-  .user-card {
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
-  }
-}
-
-/* 移动设备适配 */
-@media (max-width: 768px) {
-  .video-container {
-    flex-direction: column;
-  }
-  
-  .video-container > div {
-    width: 100%;
-    min-width: unset;
-  }
-}
-
-
-.invite-link-box {
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin-top: 20px;
-    background-color: #f9f9f9;
-    border-radius: 5px;
-    width: 100%;
-    box-sizing: border-box;
-    max-width: 750px;
-}
-
-@media (max-width: 768px) {
-    .invite-link-box {
-        padding: 8px;
-        margin-top: 15px;
-    }
-}
-
-@media (max-width: 480px) {
-    .invite-link-box {
-        padding: 6px;
-        margin-top: 10px;
-    }
-}
-  
-  .invite-link {
-    display: flex;
-    align-items: center;
-  }
-  
-  .invite-link input {
-    flex: 1;
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    margin-right: 10px;
-  }
-  
-  .copy-button {
-    padding: 5px 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-  }
-  
-  .copy-button:hover {
-    background-color: #0056b3;
-  }
-
-  /* ... existing styles ... */
-
-.modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.5);
-  z-index: 1000;
-}
-
-.modal.show {
+.pagination {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.modal-content {
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 500px;
-  position: relative;
-}
-
-.close {
-  position: absolute;
-  right: 15px;
-  top: 10px;
-  font-size: 24px;
-  cursor: pointer;
-}
-
-.invite-link-container {
+  gap: 15px;
   margin-top: 20px;
 }
 
-.link-box {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.link-box input {
-  flex: 1;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.link-box button {
+.page-btn {
   padding: 8px 16px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: black;
+  border-radius: 5px;
   cursor: pointer;
 }
 
-.link-box button:hover {
-  background-color: #0056b3;
+.page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
-
-.start-call-button {
-  float: right;  /* 或者使用下面的 margin-left: auto 方案 */
-  margin: 10px;
-  padding: 8px 16px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+.page-info {
+  color: black;
 }
 
-/* 或者，如果按钮在容器内，可以使用 flex 布局 */
-.start-call-button-container {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.start-call-button:hover {
-  background-color: #0056b3;
-}
-
-/* 可以添加一些自定义样式来美化 SweetAlert */
-:root {
-  --swal2-background: #2d3436;
-  --swal2-color: #fff;
-}
-
-.swal2-popup {
-  background: var(--swal2-background) !important;
-  color: var(--swal2-color) !important;
-}
-
-.swal2-input {
-  background: rgba(255, 255, 255, 0.1) !important;
-  color: white !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-}
-
-#copyBtn {
-  margin-left: 1rem;
-  background: #007bff !important;
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .main-container {
+    padding: 10px;
+  }
+  
+  .user-list-container {
+    padding: 15px;
+    margin: 0 10px;
+  }
 }

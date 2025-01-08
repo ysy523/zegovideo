@@ -6,11 +6,20 @@ import { ApiService } from '../api.service'; // Import the ApiService
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'app-video-call',
   templateUrl: './video-call.component.html',
-  styleUrls: ['./video-call.component.css']
+  styleUrls: ['./video-call.component.css'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    HeaderComponent
+  ]
 })
 export class VideoCallComponent implements OnInit {
 
@@ -29,7 +38,10 @@ export class VideoCallComponent implements OnInit {
     { userID: 'userone', userName: 'UserAli' },
     { userID: 'usertwo', userName: 'UserAmat' },
     { userID: 'userthree', userName: 'UserAbu' },
-    { userID: 'userfour', userName: 'UserAdmin' }
+    { userID: 'userfour', userName: 'UserAdmin' },
+    { userID: 'user5', userName: 'User Five' },
+    { userID: 'user6', userName: 'User Six' },
+    { userID: 'user7', userName: 'User Seven' },
   ]; // Dummy user list
 
   selectedUser: any;
@@ -58,13 +70,46 @@ export class VideoCallComponent implements OnInit {
 
   inviteUrl = '';
 
-  ngOnInit(): void {
+  searchTerm: string = '';
+  currentPage: number = 1;
+  itemsPerPage: number = 6;
+  filteredUsers: any[] = [];
+  displayedUsers: any[] = [];
 
-  
-   
+  ngOnInit(): void {
+    this.filteredUsers = [...this.users];
+    this.updateDisplayedUsers();
   }
 
+  get totalPages(): number {
+    return Math.ceil(this.filteredUsers.length / this.itemsPerPage);
+  }
 
+  onSearch(): void {
+    this.currentPage = 1;
+    if (this.searchTerm.trim() === '') {
+      this.filteredUsers = [...this.users];
+    } else {
+      this.filteredUsers = this.users.filter(user => 
+        user.userName.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        user.userID.toLowerCase().includes(this.searchTerm.toLowerCase())
+      );
+    }
+    this.updateDisplayedUsers();
+  }
+
+  changePage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.updateDisplayedUsers();
+    }
+  }
+
+  private updateDisplayedUsers(): void {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    const end = start + this.itemsPerPage;
+    this.displayedUsers = this.filteredUsers.slice(start, end);
+  }
 
   async getToken(userid:any, username:any ,roomID:any) :Promise<any>{
     const  requestData = { userID: userid, userName:username , roomID:roomID};  // Example parameters to send in POST request
@@ -97,16 +142,16 @@ export class VideoCallComponent implements OnInit {
 
 
     const result = await Swal.fire({
-      title: 'Room Created Successfully!',
+      title: 'Room Created ',
       html: `
         <div class="invite-link-container">
           <p>Share this link to invite ${this.selectedUsername}:</p>
           <div class="link-box">
             <input id="inviteLink" value="${this.inviteUrl}" readonly
-            style="width: 100%; padding: 8px; margin: 10px 0;">
-          </div>
-          <div class="link-box">
-            <button id="copyBtn" class="swal2-confirm swal2-styled">Copy Link</button>
+            style="flex: 1; padding: 8px; border-radius: 4px; border: 1px solid black; background: rgba(255,255,255,0.1); color: black;">
+        
+            <button id="copyBtn" class="swal2-confirm swal2-styled"
+            style="margin: 0; padding: 7px 5px; white-space: nowrap;">Copy Link</button>
           </div>
         </div>
       `,

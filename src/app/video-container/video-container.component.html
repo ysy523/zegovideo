@@ -32,20 +32,20 @@
 </div>
 
   <!-- 用户详情侧边栏 (现在在右侧) -->
-  <div class="user-sidebar">
+ @if(roles === 'admin'){ <div class="user-sidebar">
     <div class="user-details">
       <div class="user-header">
-        <div class="avatar">
+        <!-- <div class="avatar">
           <img src="" alt="user avatar">
-        </div>
+        </div> -->
         <h3 class="user-name">{{ userName }}</h3>
         <span class="user-status online">Online</span>
       </div>
       
       <div class="call-info">
         <div class="info-item">
-          <span class="label">Room ID:</span>
-          <span class="value">{{ roomId }}</span>
+          <span class="label">current camera:</span>
+          <span class="value">{{ deviceInfo.currentMicrophone }}</span>
         </div>
         <div class="info-item">
           <span class="label">Duration:</span>
@@ -54,4 +54,5 @@
       </div>
     </div>
   </div>
+}
 </div>

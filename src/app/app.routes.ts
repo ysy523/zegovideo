@@ -11,7 +11,7 @@ export const routes: Routes = [
       path: 'video-room/:roomId',  // 添加roomId参数
       component: VideoContainerComponent
     },
-    { path: 'join/:roomId', component: UserJoinVideoComponent },
+    { path: 'join/:roomId', component: VideoContainerComponent },
     { path: '**', redirectTo: '/video-call' } // Fallback route for invalid paths
   ];
 

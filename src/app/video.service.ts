@@ -6,6 +6,9 @@ import { environment } from '../environments/environment';
     providedIn: 'root'
   })
 
+
+
+
   export class VideoService {
     zegoEngine: any;
     localStream: any;
@@ -13,6 +16,17 @@ import { environment } from '../environments/environment';
 
     private appId = environment.zegoCloud.appId;
     private serverSecret = environment.zegoCloud.serverSecret;
+
+
+    deviceInfo = {
+        cameras: [] as MediaDeviceInfo[],
+        microphones: [] as MediaDeviceInfo[],
+        speakers: [] as MediaDeviceInfo[],
+        currentCamera: '',
+        currentMicrophone: '',
+        currentSpeaker: ''
+      }
+
 
     constructor() {
         this.initZegoEngine();
@@ -27,6 +41,21 @@ import { environment } from '../environments/environment';
       console.log('ZEGO Engine initialized successfully');
     } catch (error) {
       console.error('Failed to initialize ZEGO Engine:', error);
+    }
+  }
+
+
+  async getZegoDeviceInfo() {
+    try {
+  
+      // 获取当前使用的设备
+      const microphones = await this.zegoEngine.getCameras();
+      const { deviceID } = microphones[0]
+
+      return  deviceID;
+
+    } catch (error) {
+      console.error('Failed to get device info:', error);
     }
   }
 

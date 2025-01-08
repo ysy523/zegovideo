@@ -29,6 +29,17 @@ export class VideoContainerComponent implements OnInit {
   private streamUpdateHandler: any;
   private activeStreamId: string | null = null;
 
+  deviceInfo = {
+    cameras: [] as MediaDeviceInfo[],
+    microphones: [] as MediaDeviceInfo[],
+    speakers: [] as MediaDeviceInfo[],
+    currentCamera: '',
+    currentMicrophone: '',
+    currentSpeaker: ''
+  }
+
+  
+
   constructor(private route: ActivatedRoute,
               private router: Router ,
               private zegoService: VideoService,
@@ -72,6 +83,8 @@ export class VideoContainerComponent implements OnInit {
     }
   }
 
+  
+
 
   async startcall(token:any){
       if (token){
@@ -79,8 +92,13 @@ export class VideoContainerComponent implements OnInit {
     this.localVideo.nativeElement.srcObject = localStream;
     console.log('Local stream set up successfully');
 
+    const currentDevices = await this.zegoService.getZegoDeviceInfo();
+ 
+    this.deviceInfo.currentMicrophone = currentDevices || 'No microphone';
+  
+
      // Handle remote stream updates
-     this.streamUpdateHandler = this.zegoService.zegoEngine.on('roomStreamUpdate', 
+     this.streamUpdateHandler = await this.zegoService.zegoEngine.on('roomStreamUpdate', 
       async (roomID: string, updateType: string, streamList: any[]) => {
         console.error('Stream update:', { roomID, updateType, streamCount: streamList.length });
         
@@ -131,7 +149,11 @@ async leaveRoom() {
         this.activeStreamId = null;
       }
       await this.zegoService.endCall(this.roomId);
-      this.router.navigate(['/video-call']);
+      if(this.roles === 'user'){
+           window.close();
+      }else{
+        this.router.navigate(['/video-call']);
+      }
     } catch (error) {
       console.error('Error leaving room:', error);
     }

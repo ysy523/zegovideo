@@ -1,46 +1,56 @@
-<div class="user-list-container">
-  <div class="user-list-wrapper">
-    @if (isAdmin) {
-    <!-- <app-header></app-header> -->
+<div class="main-container">
+  <app-header></app-header>
+  
+  <div class="user-list-container">
+  
+
+    <div class="search-pagination-container">
+      <div class="search-box">
+        <input 
+          type="text" 
+          [(ngModel)]="searchTerm" 
+          (input)="onSearch()"
+          placeholder="Search users..."
+          class="search-input"
+        >
+      </div>
+    </div>
+
     <div class="user-list">
       <h2>User List</h2>
 
-      @for (user of users; track user) {
-      <div class="user-card">
+      <div class="user-card" *ngFor="let user of displayedUsers">
         <div class="user-info">
           <span class="user-name">{{ user.userName }}</span>
         </div>
-       
-        @if (isAdmin) {
-        <button class="call-button" (click)="openModal(user?.userID , user.userName)">Create Room</button>
-        }
+        
+        <button class="call-button" (click)="openModal(user?.userID, user.userName)">
+          Create Room
+        </button>
       </div>
-
-      <!-- Modal -->
-      <div class="modal" [class.show]="isModalOpen">
-        <div class="modal-content">
-          <span class="close" (click)="closeModal()">&times;</span>
-          <h2>Room Created Successfully!</h2>
-          <div class="invite-link-container">
-            <p>Share this link to invite  {{ selectedUsername || null }}:</p>
-            <div class="link-box">
-              <input #inviteLink [value]="inviteUrl" readonly>
-              <button (click)="copyLink(inviteLink)">Copy</button>
-            </div>
-            <div class="">
-            <button class="start-call-button" (click)="createRoom(user)">
-              Start call with  {{selectedUsername|| null  }}
-            </button>
-            </div>
-          </div> 
-        </div>
-      </div>
-      }
-
     </div>
-    }
-  </div>
 
+    <!-- 分页控件 -->
+    <div class="pagination">
+      <button 
+        [disabled]="currentPage === 1"
+        (click)="changePage(currentPage - 1)"
+        class="page-btn prev"
+      >
+        Previous
+      </button>
+      <span class="page-info">
+        Page {{currentPage}} of {{totalPages}}
+      </span>
+      <button 
+        [disabled]="currentPage === totalPages"
+        (click)="changePage(currentPage + 1)"
+        class="page-btn next"
+      >
+        Next
+      </button>
+    </div>
+  </div>
 </div>
 <!-- <div class="invite-link-box">
 

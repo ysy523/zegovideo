@@ -10,6 +10,7 @@ import { VideoCallComponent } from './video-call/video-call.component';
 import { VideoContainerComponent } from './video-container/video-container.component';
 import { UserJoinVideoComponent } from './user-join-video/user-join-video.component';
 import { ApiService } from './api.service';  // Import ApiService
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { ApiService } from './api.service';  // Import ApiService
     HttpClientModule,
     CommonModule,
     RouterModule, // Add RouterModule here
-    AppRoutingModule
+    AppRoutingModule,
+    FormsModule
   ],
   providers: [ApiService],
   bootstrap: [AppComponent] // Bootstraps AppComponent

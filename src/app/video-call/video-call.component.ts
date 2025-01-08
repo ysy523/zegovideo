@@ -26,10 +26,10 @@ export class VideoCallComponent implements OnInit {
    isAdmin: boolean = true; // Replace with actual logic to determine admin status
    activeRoomID:string =''// Track the currently active room
    users = [
-    { userID: 'user1', userName: 'User 1' },
-    { userID: 'user2', userName: 'User 2' },
-    { userID: 'user3', userName: 'User 3' },
-    { userID: 'user4', userName: 'User 4' }
+    { userID: 'userone', userName: 'UserAli' },
+    { userID: 'usertwo', userName: 'UserAmat' },
+    { userID: 'userthree', userName: 'UserAbu' },
+    { userID: 'userfour', userName: 'UserAdmin' }
   ]; // Dummy user list
 
   selectedUser: any;

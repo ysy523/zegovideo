@@ -103,7 +103,7 @@ export class VideoContainerComponent implements OnInit {
         console.error('Stream update:', { roomID, updateType, streamCount: streamList.length });
         
         if (updateType === 'ADD' && streamList.length > 0) {
-           const streamID = streamList[1].streamID;
+           const streamID = streamList[0].streamID;
             // Check if we're already playing this stream
             if (this.activeStreamId !== streamID) {
               // If there's an existing stream, stop it first
@@ -112,7 +112,8 @@ export class VideoContainerComponent implements OnInit {
               }
 
           const remoteStream = await this.zegoService.zegoEngine.startPlayingStream(streamID);
-          this.remoteVideo.nativeElement.srcObject = remoteStream;
+          const remoteView = await this.zegoService.zegoEngine.createRemoteStreamView(remoteStream);
+          this.remoteVideo.nativeElement.srcObject = remoteView;
 
           this.activeStreamId = streamID;
           console.log('Remote stream added successfully');

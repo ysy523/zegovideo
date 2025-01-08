@@ -8,6 +8,7 @@ import { RouterModule } from '@angular/router'; // Import RouterModule
 import { HeaderComponent } from './header/header.component';
 import { VideoCallComponent } from './video-call/video-call.component';
 import { VideoContainerComponent } from './video-container/video-container.component';
+import { UserJoinVideoComponent } from './user-join-video/user-join-video.component';
 import { ApiService } from './api.service';  // Import ApiService
 
 @NgModule({
@@ -15,7 +16,8 @@ import { ApiService } from './api.service';  // Import ApiService
     AppComponent,
     HeaderComponent,
     VideoCallComponent,
-    VideoContainerComponent
+    VideoContainerComponent,
+    UserJoinVideoComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA], // Add this
   imports: [

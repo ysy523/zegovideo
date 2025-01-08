@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class ApiService {
-  private apiUrl = 'https://zegoapi-ahkpvp9ym-shanyus-projects.vercel.app/generatetoken'; // replace with your API endpoint
+  private apiUrl = 'https://zegoapi.vercel.app/generatetoken'; // replace with your API endpoint
 
   constructor(private http: HttpClient) {}
 

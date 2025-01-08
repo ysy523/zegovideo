@@ -1,0 +1,57 @@
+<div class="main-container">
+  <!-- 视频容器 -->
+  <div class="video-container">
+    <div class="header-bar">
+      <div class="room-info">
+        <span class="room-id">Room ID: {{ roomId }}</span>
+      </div>
+      <button class="leave-room-btn" (click)="leaveRoom()">
+        <svg class="exit-icon" viewBox="0 0 24 24">
+          <path d="M17 7L15.59 8.41L18.17 11H8V13H18.17L15.59 15.58L17 17L22 12L17 7Z"/>
+          <path d="M4 5H12V3H4C2.9 3 2 3.9 2 5V19C2 20.1 2.9 21 4 21H12V19H4V5Z"/>
+        </svg>
+        <span class="btn-text">Leave Room</span>
+      </button>
+    </div>
+
+  <div class="video-grid">
+    <div class="video-wrapper local-video">
+      <video  #localVideo autoplay playsinline muted></video>
+      <div class="video-overlay">
+        <span class="participant-name">You</span>
+      </div>
+    </div>
+
+    <div class="video-wrapper remote-video">
+      <video #remoteVideo autoplay playsinline></video>
+      <div class="video-overlay">
+        <span class="participant-name">Remote User</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- 用户详情侧边栏 (现在在右侧) -->
+  <div class="user-sidebar">
+    <div class="user-details">
+      <div class="user-header">
+        <div class="avatar">
+          <img src="" alt="user avatar">
+        </div>
+        <h3 class="user-name">{{ userName }}</h3>
+        <span class="user-status online">Online</span>
+      </div>
+      
+      <div class="call-info">
+        <div class="info-item">
+          <span class="label">Room ID:</span>
+          <span class="value">{{ roomId }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Duration:</span>
+          <span class="value">{{ callDuration }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

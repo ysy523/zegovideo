@@ -1,0 +1,79 @@
+<div class="user-list-container">
+  <div class="user-list-wrapper">
+    @if (isAdmin) {
+    <!-- <app-header></app-header> -->
+    <div class="user-list">
+      <h2>User List</h2>
+
+      @for (user of users; track user) {
+      <div class="user-card">
+        <div class="user-info">
+          <span class="user-name">{{ user.userName }}</span>
+        </div>
+       
+        @if (isAdmin) {
+        <button class="call-button" (click)="openModal(user?.userID , user.userName)">Create Room</button>
+        }
+      </div>
+
+      <!-- Modal -->
+      <div class="modal" [class.show]="isModalOpen">
+        <div class="modal-content">
+          <span class="close" (click)="closeModal()">&times;</span>
+          <h2>Room Created Successfully!</h2>
+          <div class="invite-link-container">
+            <p>Share this link to invite  {{ selectedUsername || null }}:</p>
+            <div class="link-box">
+              <input #inviteLink [value]="inviteUrl" readonly>
+              <button (click)="copyLink(inviteLink)">Copy</button>
+            </div>
+            <div class="">
+            <button class="start-call-button" (click)="createRoom(user)">
+              Start call with  {{selectedUsername|| null  }}
+            </button>
+            </div>
+          </div> 
+        </div>
+      </div>
+      }
+
+    </div>
+    }
+  </div>
+
+</div>
+<!-- <div class="invite-link-box">
+
+  <p>Invite Link:</p>
+  <div class="invite-link">
+    <input type="text" [value]="inviteLink" readonly>
+    <button class="call-button" (click)="copyInviteLink()">Copy Invite Link</button>
+  </div>
+</div> -->
+
+
+<!-- <div class="video-container">
+<div class="video-grid">
+  <div class="video-wrapper local-video">
+    <video id="local-video" autoplay playsinline muted></video>
+    <div class="video-overlay">
+      <span class="participant-name">You</span>
+    </div>
+  </div>
+
+
+  <div class="video-wrapper remote-video">
+    <h3>Remote Video</h3>
+    <video id="remote-video" autoplay playsinline></video>
+    <div class="video-overlay">
+      <span class="participant-name">Remote User</span>
+    </div>
+  </div>
+</div>
+
+
+</div> -->
+
+
+
+

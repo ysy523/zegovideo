@@ -103,32 +103,26 @@ export class VideoContainerComponent implements OnInit {
         console.error('Stream update:', { roomID, updateType, streamCount: streamList.length });
         
         if (updateType === 'ADD' && streamList.length > 0) {
-          //  const streamID = streamList[0].streamID;
-          //   // Check if we're already playing this stream
-          //   if (this.activeStreamId !== streamID) {
-          //     // If there's an existing stream, stop it first
-          //     if (this.activeStreamId) {
-          //       await this.zegoService.zegoEngine.stopPlayingStream(this.activeStreamId);
-          //     }
+           const streamID = streamList[1].streamID;
+            // Check if we're already playing this stream
+            if (this.activeStreamId !== streamID) {
+              // If there's an existing stream, stop it first
+              if (this.activeStreamId) {
+                await this.zegoService.zegoEngine.stopPlayingStream(this.activeStreamId);
+              }
 
-            streamList.forEach((stream) => {
-                const remoteStream = this.zegoService.zegoEngine.startPlayingStream(stream.streamID);
-                this.remoteVideo.nativeElement.srcObject = remoteStream;
-                console.log('Playing stream with ID:', stream.streamID);
-              });
+          const remoteStream = await this.zegoService.zegoEngine.startPlayingStream(streamID);
+          this.remoteVideo.nativeElement.srcObject = remoteStream;
 
-          // const remoteStream = await this.zegoService.zegoEngine.startPlayingStream(streamID);
-          // this.remoteVideo.nativeElement.srcObject = remoteStream;
-
-          // this.activeStreamId = streamID;
+          this.activeStreamId = streamID;
           console.log('Remote stream added successfully');
 
         }
-        // }else if (updateType === 'DELETE' && this.activeStreamId) {
-        //     await this.zegoService.zegoEngine.stopPlayingStream(this.activeStreamId);
-        //     this.activeStreamId = null;
-        //     this.remoteVideo.nativeElement.srcObject = null;
-        //   }
+        }else if (updateType === 'DELETE' && this.activeStreamId) {
+            await this.zegoService.zegoEngine.stopPlayingStream(this.activeStreamId);
+            this.activeStreamId = null;
+            this.remoteVideo.nativeElement.srcObject = null;
+          }
       });
     } else{
       alert('No token found');

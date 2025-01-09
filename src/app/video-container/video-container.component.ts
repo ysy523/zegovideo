@@ -106,10 +106,7 @@ export class VideoContainerComponent implements OnInit {
           }
         } else {
           // 用户只需要登录房间
-          await this.zegoService.zegoEngine.loginRoom(this.roomId, token, {
-            userID: this.userId,
-            userName: this.userId
-          });
+          await this.zegoService.startCall(this.roomId, this.userId, token);
           console.log('User: Successfully joined room');
         }
 

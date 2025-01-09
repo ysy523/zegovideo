@@ -98,20 +98,31 @@ export class VideoContainerComponent implements OnInit {
   
 
      // Handle remote stream updates
-     this.streamUpdateHandler = await this.zegoService.zegoEngine.on('roomStreamUpdate', 
+      await this.zegoService.zegoEngine.on('roomStreamUpdate', 
       async (roomID: string, updateType: string, streamList: any[]) => {
         console.error('Stream update:', { roomID, updateType, streamCount: streamList.length });
-        
-        if (updateType === 'ADD' && streamList.length > 0) {
-           const streamID = streamList[0].streamID;
-          
 
-          const remoteStream = await this.zegoService.startPlayingStream(streamID);
+        if(updateType === 'ADD'){
+        
+        for (const stream of streamList) {
+          try {
+
+          const remoteStream = await this.zegoService.startPlayingStream(stream.streamID);
           // const remoteView = await this.zegoService.zegoEngine.createRemoteStreamView(remoteStream);
           this.remoteVideo.nativeElement.srcObject = remoteStream;
 
+          } catch(err){
+            alert(err)
+          }
+
+        }
+
+        }else if(updateType === 'DELETE'){
+
           
-          console.log('Remote stream added successfully');
+          for (const stream of streamList) {
+            this.zegoService.zegoEngine.stopPlayingStream(stream.streamID);
+          }
 
         }
         

@@ -75,7 +75,7 @@ export class UserJoinVideoComponent {
   async startcall(token:any){
       if (token){
         
-    const localStream = await this.zegoService.startCall(this.roomId, this.userId ,token);
+    const localStream = await this.zegoService.startCall(this.roomId, this.userId ,token, this.roles);
     this.localVideo.nativeElement.srcObject = localStream;
     console.log('Local stream set up successfully');
 

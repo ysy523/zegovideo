@@ -75,7 +75,7 @@ export class VideoContainerComponent implements OnInit {
     ).subscribe();
     this.startDurationTimer();
 
-
+        if(this.roles === 'user'){
         // Efficiently subscribe to roomStreamUpdate with rxjs
         this.zegoService.streamUpdate$
           .pipe(
@@ -93,6 +93,7 @@ export class VideoContainerComponent implements OnInit {
               }
             }
           });
+        }
   }
 
   private startDurationTimer() {

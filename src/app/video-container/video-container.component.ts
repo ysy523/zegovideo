@@ -109,6 +109,7 @@ export class VideoContainerComponent implements OnInit {
       } 
 
       // 监听流更新
+      if (this.roles==="user"){
       this.zegoService.zegoEngine.on('roomStreamUpdate', 
         async (roomID: string, updateType: string, streamList: any[]) => {
           if (updateType === 'ADD') {
@@ -124,7 +125,7 @@ export class VideoContainerComponent implements OnInit {
               }
             }
           }
-      });
+      });}
 
     } catch (error) {
       console.error('Call setup error:', error);

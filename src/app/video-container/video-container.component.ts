@@ -60,6 +60,8 @@ export class VideoContainerComponent implements OnInit {
         
         if (this.roomId && this.userId && this.userName && this.roles) {
           this.getToken(this.userId, this.userName, this.roomId);
+        }else{
+             alert("missing params to start call")
         }
       })
     ).subscribe();
@@ -102,14 +104,11 @@ export class VideoContainerComponent implements OnInit {
         
         if (this.localVideo?.nativeElement) {
           this.localVideo.nativeElement.srcObject = localStream;
-          this.localVideo.nativeElement.autoplay = true;
-          this.localVideo.nativeElement.playsInline = true;
           console.log('Admin: Local preview set up');
         }
       } 
 
       // 监听流更新
-      if (this.roles==="user"){
       this.zegoService.zegoEngine.on('roomStreamUpdate', 
         async (roomID: string, updateType: string, streamList: any[]) => {
           if (updateType === 'ADD') {
@@ -120,12 +119,10 @@ export class VideoContainerComponent implements OnInit {
               
               if (this.remoteVideo?.nativeElement) {
                 this.remoteVideo.nativeElement.srcObject = remoteStream;
-                this.remoteVideo.nativeElement.autoplay = true;
-                this.remoteVideo.nativeElement.playsInline = true;
               }
             }
           }
-      });}
+      });
 
     } catch (error) {
       console.error('Call setup error:', error);

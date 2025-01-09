@@ -96,7 +96,7 @@ export class VideoContainerComponent implements OnInit {
     try {
       console.log(`${this.roles} starting call in room:`, this.roomId);
 
-      if (this.roles === 'admin') {
+      if (this.roles) {
         // 管理员：使用 startCall
         const localStream = await this.zegoService.startCall(this.roomId, this.userId, token);
         
@@ -106,10 +106,7 @@ export class VideoContainerComponent implements OnInit {
           this.localVideo.nativeElement.playsInline = true;
           console.log('Admin: Local preview set up');
         }
-      } else {
-        // 用户：直接使用 startCall 方法
-        await this.zegoService.startCall(this.roomId, this.userId, token);
-      }
+      } 
 
       // 监听流更新
       this.zegoService.zegoEngine.on('roomStreamUpdate', 
@@ -132,21 +129,7 @@ export class VideoContainerComponent implements OnInit {
     }
   }
 
-  private setupAutoplayFix() {
-    const playVideo = async () => {
-      if (this.remoteVideo?.nativeElement) {
-        try {
-          await this.remoteVideo.nativeElement.play();
-          document.removeEventListener('click', playVideo);
-          console.log('Video playing after user interaction');
-        } catch (error) {
-          console.error('Play failed:', error);
-        }
-      }
-    };
-
-    document.addEventListener('click', playVideo);
-  }
+  
 
   async leaveRoom() {
     try {

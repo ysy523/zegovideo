@@ -113,6 +113,8 @@ export class VideoContainerComponent implements OnInit {
         async (roomID: string, updateType: string, streamList: any[]) => {
           if (updateType === 'ADD') {
             for (const stream of streamList) {
+
+
               const remoteStream = await this.zegoService.startPlayingStream(stream.streamID);
               
               if (this.remoteVideo?.nativeElement) {
@@ -132,31 +134,35 @@ export class VideoContainerComponent implements OnInit {
   
 
   async leaveRoom() {
-    try {
-      
-        await this.zegoService.zegoEngine.stopPublishingStream();
-        if (this.localVideo?.nativeElement) {
-     
-          this.localVideo.nativeElement.srcObject = null;
+    const result = await Swal.fire({
+      title: 'Leave Room',
+      text: 'Are you sure you want to leave this room?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc3545',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Yes, leave room',
+      cancelButtonText: 'Cancel'
+    });
+  
+    if (result.isConfirmed) {
+      try {
+        if (this.activeStreamId) {
+          this.zegoService.zegoEngine.stopPlayingStream(this.activeStreamId);
+          this.activeStreamId = null;
         }
-      
-
-      if (this.remoteVideo?.nativeElement) {
-        this.remoteVideo.nativeElement.srcObject = null;
+        await this.zegoService.endCall(this.roomId);
+        if(this.roles === 'user'){
+             window.close();
+        }else{
+          this.router.navigate(['/video-call']);
+        }
+      } catch (error) {
+        console.error('Error leaving room:', error);
       }
-
-      await this.zegoService.zegoEngine.logoutRoom(this.roomId);
-      console.warn('Left room:', this.roomId);
-
-      if (this.roles === 'admin') {
-        this.router.navigate(['/video-call']);
-      } else {
-        window.close();
-      }
-    } catch (error) {
-      console.error('Error leaving room:', error);
     }
   }
+  
   
   async getToken(userid:any, username:any ,roomID:any) :Promise<any>{
     const  requestData = { userID: userid, userName:username , roomID:roomID};  // Example parameters to send in POST request

@@ -47,12 +47,11 @@ import { environment } from '../environments/environment';
 
   async startPlayingStream(streamID: string) {
     try {
-      if (this.zegoEngine) {
+    
         const result = await this.zegoEngine.startPlayingStream(streamID); // Assuming this returns a Promise
         return result;
-      } else {
-        console.error('Zego Engine is not initialized.');
-      }
+ 
+      
     } catch (error) {
       console.error('Failed to start playing stream:', error);
     }
@@ -77,7 +76,7 @@ import { environment } from '../environments/environment';
 
     try {
      // Check permissions first
-     alert("user id is " + userID)
+    
      await this.checkPermissions();
     // Login to room with proper user object
     await this.zegoEngine.loginRoom(roomID, token, {

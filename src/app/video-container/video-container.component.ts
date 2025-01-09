@@ -90,7 +90,7 @@ export class VideoContainerComponent implements OnInit {
   async startcall(token: any) {
     if (token) {
       try {
-        console.log('Starting call with role:', this.roles);
+        console.log('Starting call with role:', this.roles, 'userId:', this.userId, 'roomId:', this.roomId);
 
         if (this.roles === 'admin') {
           try {
@@ -107,44 +107,58 @@ export class VideoContainerComponent implements OnInit {
             console.error('Admin: Error in publishing:', publishError);
           }
         } else {
-          // 用户：只需要登录房间
-          await this.zegoService.zegoEngine.loginRoom(this.roomId, token, {
-            userID: this.userId,
-            userName: this.userId
-          });
-          console.log('User: Successfully joined room');
+          // 用户：登录房间并准备接收流
+          try {
+            console.log('User attempting to join room with token:', token);
+            
+            // 确保正确登录房间
+            await this.zegoService.zegoEngine.loginRoom(this.roomId, token, {
+              userID: this.userId,
+              userName: this.userId
+            }, { userUpdate: true });  // 添加 userUpdate 参数
+            
+            console.log('User: Successfully joined room');
+          } catch (loginError) {
+            console.error('User: Failed to join room:', loginError);
+            throw loginError;
+          }
         }
 
         // 监听远程流更新
         this.zegoService.zegoEngine.on('roomStreamUpdate', 
           async (roomID: string, updateType: string, streamList: any[]) => {
-            console.log('Stream update:', { 
+            console.log('Stream update event received:', { 
               role: this.roles, 
               roomID, 
               updateType, 
-              streams: streamList 
+              streamCount: streamList.length,
+              streams: streamList.map(s => s.streamID)
             });
 
             if (updateType === 'ADD') {
               for (const stream of streamList) {
                 try {
-                  console.log(`${this.roles}: New stream available:`, stream.streamID);
+                  console.log(`${this.roles}: Attempting to play stream:`, stream.streamID);
                   
                   // 开始播放远程流
                   const remoteStream = await this.zegoService.startPlayingStream(stream.streamID);
+                  console.log(`${this.roles}: Successfully got remote stream`);
 
                   if (this.remoteVideo?.nativeElement) {
+                    console.log(`${this.roles}: Setting up remote video element`);
                     this.remoteVideo.nativeElement.srcObject = remoteStream;
                     this.remoteVideo.nativeElement.autoplay = true;
                     this.remoteVideo.nativeElement.playsInline = true;
                     
                     try {
                       await this.remoteVideo.nativeElement.play();
-                      console.log(`${this.roles}: Remote video playing:`, stream.streamID);
+                      console.log(`${this.roles}: Remote video playing successfully`);
                     } catch (playError) {
                       console.error(`${this.roles}: Playback error:`, playError);
                       this.handleAutoPlayError();
                     }
+                  } else {
+                    console.error(`${this.roles}: Remote video element not found`);
                   }
 
                   this.activeStreamId = stream.streamID;
@@ -155,12 +169,13 @@ export class VideoContainerComponent implements OnInit {
               }
             } else if (updateType === 'DELETE') {
               for (const stream of streamList) {
+                console.log(`${this.roles}: Stream being removed:`, stream.streamID);
                 if (stream.streamID === this.activeStreamId) {
                   if (this.remoteVideo?.nativeElement) {
                     this.remoteVideo.nativeElement.srcObject = null;
                   }
                   this.activeStreamId = null;
-                  console.log(`${this.roles}: Stream removed:`, stream.streamID);
+                  console.log(`${this.roles}: Stream removed successfully`);
                 }
               }
             }
@@ -169,23 +184,38 @@ export class VideoContainerComponent implements OnInit {
         // 监听房间状态
         this.zegoService.zegoEngine.on('roomStateUpdate', 
           (roomID: string, state: string, errorCode: number, extendedData: string) => {
-            console.log('Room state:', {
+            console.log('Room state update:', {
               role: this.roles,
               roomID,
               state,
-              errorCode
+              errorCode,
+              extendedData
             });
             
             if (errorCode !== 0) {
-              console.error(`${this.roles}: Room error:`, errorCode);
+              console.error(`${this.roles}: Room state error:`, errorCode);
             }
+        });
+
+        // 监听用户状态
+        this.zegoService.zegoEngine.on('roomUserUpdate',
+          (roomID: string, updateType: string, userList: any[]) => {
+            console.log('Room user update:', {
+              role: this.roles,
+              roomID,
+              updateType,
+              userCount: userList.length,
+              users: userList
+            });
         });
 
       } catch (error) {
         console.error(`${this.roles}: Call setup error:`, error);
+        throw error;
       }
     } else {
       console.error('No token provided');
+      throw new Error('Token is required');
     }
   }
 
@@ -193,6 +223,8 @@ export class VideoContainerComponent implements OnInit {
   private handleAutoPlayError() {
     if (this.remoteVideo?.nativeElement) {
       const videoElement = this.remoteVideo.nativeElement;
+      console.log('Setting up autoplay error handler');
+      
       document.addEventListener('click', async () => {
         try {
           await videoElement.play();

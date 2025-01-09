@@ -102,6 +102,15 @@ import { environment } from '../environments/environment';
 }
 
 
+async startCallUser(roomID: string, userID: string ,token:any) {
+    // 用户只需要登录房间
+    await this.zegoEngine.loginRoom(roomID, token, {
+        userID: userID,
+        userName: userID
+      }, { userUpdate: true });
+}
+
+
 private async checkPermissions() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ 

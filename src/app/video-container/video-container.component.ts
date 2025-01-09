@@ -96,7 +96,7 @@ export class VideoContainerComponent implements OnInit {
     try {
       console.log(`${this.roles} starting call in room:`, this.roomId);
 
-      if (this.roles) {
+      if (this.roles === 'admin') {
         // 管理员：使用 startCall
         const localStream = await this.zegoService.startCall(this.roomId, this.userId, token);
         
@@ -106,7 +106,9 @@ export class VideoContainerComponent implements OnInit {
           this.localVideo.nativeElement.playsInline = true;
           console.log('Admin: Local preview set up');
         }
-      } 
+      } else{
+        await this.zegoService.startCallUser(this.roomId, this.userId, token);
+      }
 
       // 监听流更新
       this.zegoService.zegoEngine.on('roomStreamUpdate', 

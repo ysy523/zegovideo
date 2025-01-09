@@ -94,19 +94,24 @@ export class VideoContainerComponent implements OnInit {
 
         if (this.roles === 'admin') {
           try {
-            // 使用现有的 startCall 方法
+            // 管理员：使用 startCall 启动并发布流
             const localStream = await this.zegoService.startCall(this.roomId, this.userId, token);
             
             if (this.localVideo?.nativeElement) {
               this.localVideo.nativeElement.srcObject = localStream;
+              this.localVideo.nativeElement.autoplay = true;
+              this.localVideo.nativeElement.playsInline = true;
               console.log('Admin: Local preview set up');
             }
           } catch (publishError) {
             console.error('Admin: Error in publishing:', publishError);
           }
         } else {
-          // 用户只需要登录房间
-          await this.zegoService.startCall(this.roomId, this.userId, token);
+          // 用户：只需要登录房间
+          await this.zegoService.zegoEngine.loginRoom(this.roomId, token, {
+            userID: this.userId,
+            userName: this.userId
+          });
           console.log('User: Successfully joined room');
         }
 
@@ -125,7 +130,7 @@ export class VideoContainerComponent implements OnInit {
                 try {
                   console.log(`${this.roles}: New stream available:`, stream.streamID);
                   
-                  // 使用现有的 startPlayingStream 方法
+                  // 开始播放远程流
                   const remoteStream = await this.zegoService.startPlayingStream(stream.streamID);
 
                   if (this.remoteVideo?.nativeElement) {
@@ -135,7 +140,7 @@ export class VideoContainerComponent implements OnInit {
                     
                     try {
                       await this.remoteVideo.nativeElement.play();
-                      console.log(`${this.roles}: Remote video playing`);
+                      console.log(`${this.roles}: Remote video playing:`, stream.streamID);
                     } catch (playError) {
                       console.error(`${this.roles}: Playback error:`, playError);
                       this.handleAutoPlayError();
@@ -155,8 +160,24 @@ export class VideoContainerComponent implements OnInit {
                     this.remoteVideo.nativeElement.srcObject = null;
                   }
                   this.activeStreamId = null;
+                  console.log(`${this.roles}: Stream removed:`, stream.streamID);
                 }
               }
+            }
+        });
+
+        // 监听房间状态
+        this.zegoService.zegoEngine.on('roomStateUpdate', 
+          (roomID: string, state: string, errorCode: number, extendedData: string) => {
+            console.log('Room state:', {
+              role: this.roles,
+              roomID,
+              state,
+              errorCode
+            });
+            
+            if (errorCode !== 0) {
+              console.error(`${this.roles}: Room error:`, errorCode);
             }
         });
 
@@ -185,30 +206,18 @@ export class VideoContainerComponent implements OnInit {
 
   // 离开房间
   async leaveRoom() {
-    const result = await Swal.fire({
-      title: 'Leave Room',
-      text: 'Are you sure you want to leave this room?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#dc3545',
-      cancelButtonColor: '#6c757d',
-      confirmButtonText: 'Yes, leave room',
-      cancelButtonText: 'Cancel'
-    });
-
-    if (result.isConfirmed) {
-      try {
-        // 使用现有的 endCall 方法
+    try {
+      if (this.roles === 'admin') {
+        // 管理员使用 endCall
         await this.zegoService.endCall(this.roomId);
-        
-        if (this.roles === 'user') {
-          window.close();
-        } else {
-          this.router.navigate(['/video-call']);
-        }
-      } catch (error) {
-        console.error('Error leaving room:', error);
+        this.router.navigate(['/video-call']);
+      } else {
+        // 用户只需要登出房间
+        await this.zegoService.zegoEngine.logoutRoom(this.roomId);
+        window.close();
       }
+    } catch (error) {
+      console.error('Error leaving room:', error);
     }
   }
   

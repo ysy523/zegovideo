@@ -93,7 +93,7 @@ import { environment } from '../environments/environment';
       }
     });
 
-    const streamID = `${roles}_${userID}}`;
+    const streamID =roles + userID
     
     await this.zegoEngine.startPublishingStream(streamID, this.localStream);
     return this.localStream;

@@ -104,26 +104,17 @@ export class VideoContainerComponent implements OnInit {
         
         if (updateType === 'ADD' && streamList.length > 0) {
            const streamID = streamList[0].streamID;
-            // Check if we're already playing this stream
-            if (this.activeStreamId !== streamID) {
-              // If there's an existing stream, stop it first
-              if (this.activeStreamId) {
-                await this.zegoService.zegoEngine.stopPlayingStream(this.activeStreamId);
-              }
+          
 
           const remoteStream = await this.zegoService.startPlayingStream(streamID);
           // const remoteView = await this.zegoService.zegoEngine.createRemoteStreamView(remoteStream);
           this.remoteVideo.nativeElement.srcObject = remoteStream;
 
-          this.activeStreamId = streamID;
+          
           console.log('Remote stream added successfully');
 
         }
-        }else if (updateType === 'DELETE' && this.activeStreamId) {
-            await this.zegoService.zegoEngine.stopPlayingStream(this.activeStreamId);
-            this.activeStreamId = null;
-            this.remoteVideo.nativeElement.srcObject = null;
-          }
+        
       });
     } else{
       alert('No token found');

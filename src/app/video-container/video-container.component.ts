@@ -136,13 +136,13 @@ export class VideoContainerComponent implements OnInit {
         this.zegoService.zegoEngine.on('roomStreamUpdate', async (roomID: string, updateType: string, streamList: any[]) => {
           if (updateType === 'ADD') {
             for (const stream of streamList) {
-              if (stream.userID !== this.userId) {  // Only subscribe to the admin’s stream (not the user’s)
+               // Only subscribe to the admin’s stream (not the user’s)
                 const remoteStream = await this.zegoService.startPlayingStream(stream.streamID);
                 if (this.remoteVideo?.nativeElement) {
                   this.remoteVideo.nativeElement.srcObject = remoteStream;
                   console.log('User: Subscribed to admin stream');
                 }
-              }
+              
             }
           }
         });

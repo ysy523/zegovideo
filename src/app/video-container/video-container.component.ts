@@ -76,20 +76,23 @@ export class VideoContainerComponent implements OnInit {
     this.startDurationTimer();
 
 
-      // // Listen for incoming streams (from user) to subscribe to
-      // this.zegoService.zegoEngine.on('roomStreamUpdate', async (roomID: string, updateType: string, streamList: any[]) => {
-      //   if (updateType === 'ADD') {
-      //     for (const stream of streamList) {
-      //       if (stream.userID !== this.userId) {  // Only subscribe to the user’s stream (not the admin's)
-      //         this.remoteStream = await this.zegoService.startPlayingStream(stream.streamID);
-      //         if (this.remoteVideo?.nativeElement) {
-      //           this.remoteVideo.nativeElement.srcObject = this.remoteStream;
-      //           console.log('Admin: Subscribed to user stream');
-      //         }
-      //       }
-      //     }
-      //   }
-      // });
+        // Efficiently subscribe to roomStreamUpdate with rxjs
+        this.zegoService.streamUpdate$
+          .pipe(
+            takeUntil(this.destroy$)  // Automatically unsubscribe on component destroy
+          )
+          .subscribe(async ({ roomID, updateType, streamList }) => {
+            if (updateType === 'ADD') {
+              for (const stream of streamList) {
+                if (stream.userID !== this.userId) {
+                  this.remoteStream = await this.zegoService.startPlayingStream(stream.streamID);
+                  if (this.remoteVideo?.nativeElement) {
+                    this.remoteVideo.nativeElement.srcObject = this.remoteStream;
+                  }
+                }
+              }
+            }
+          });
   }
 
   private startDurationTimer() {

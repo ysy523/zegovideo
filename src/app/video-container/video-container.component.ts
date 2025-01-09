@@ -90,30 +90,34 @@ export class VideoContainerComponent implements OnInit {
   async startcall(token: any) {
     if (token) {
       try {
-        let localStream;
-        
-        // 根据角色区分处理逻辑
+        console.log('Starting call with role:', this.roles);
+
         if (this.roles === 'admin') {
-          // 管理员：发布流
-          console.log('Admin: Starting to publish stream');
-          localStream = await this.zegoService.startCall(this.roomId, this.userId, token);
-          
-          if (this.localVideo?.nativeElement) {
-            this.localVideo.nativeElement.srcObject = localStream;
-            console.log('Admin: Local stream setup successful');
+          try {
+            // 使用现有的 startCall 方法
+            const localStream = await this.zegoService.startCall(this.roomId, this.userId, token);
+            
+            if (this.localVideo?.nativeElement) {
+              this.localVideo.nativeElement.srcObject = localStream;
+              console.log('Admin: Local preview set up');
+            }
+          } catch (publishError) {
+            console.error('Admin: Error in publishing:', publishError);
           }
         } else {
-          // 用户：只接收流
-          console.log('User: Waiting for admin stream');
-          // 用户不需要发布流，只需要准备接收
-          await this.zegoService.zegoEngine.loginRoom(this.roomId, token);
+          // 用户只需要登录房间
+          await this.zegoService.zegoEngine.loginRoom(this.roomId, token, {
+            userID: this.userId,
+            userName: this.userId
+          });
+          console.log('User: Successfully joined room');
         }
 
         // 监听远程流更新
         this.zegoService.zegoEngine.on('roomStreamUpdate', 
           async (roomID: string, updateType: string, streamList: any[]) => {
             console.log('Stream update:', { 
-              role: this.roles,
+              role: this.roles, 
               roomID, 
               updateType, 
               streams: streamList 
@@ -122,84 +126,67 @@ export class VideoContainerComponent implements OnInit {
             if (updateType === 'ADD') {
               for (const stream of streamList) {
                 try {
-                  console.log(`${this.roles}: Processing new stream:`, stream.streamID);
+                  console.log(`${this.roles}: New stream available:`, stream.streamID);
                   
-                  // 根据角色处理流
-                  if (this.roles === 'user') {
-                    // 用户：显示管理员的流在主视频区域
-                    const remoteStream = await this.zegoService.startPlayingStream(stream.streamID);
+                  // 使用现有的 startPlayingStream 方法
+                  const remoteStream = await this.zegoService.startPlayingStream(stream.streamID);
+
+                  if (this.remoteVideo?.nativeElement) {
+                    this.remoteVideo.nativeElement.srcObject = remoteStream;
+                    this.remoteVideo.nativeElement.autoplay = true;
+                    this.remoteVideo.nativeElement.playsInline = true;
                     
-                    if (this.remoteVideo?.nativeElement) {
-                      this.remoteVideo.nativeElement.srcObject = remoteStream;
-                      this.remoteVideo.nativeElement.autoplay = true;
-                      this.remoteVideo.nativeElement.playsInline = true;
-                      
-                      try {
-                        await this.remoteVideo.nativeElement.play();
-                        console.log('User: Remote video playback started');
-                      } catch (playError) {
-                        console.error('User: Error playing remote video:', playError);
-                       
-                      }
-                    }
-                  } else if (this.roles === 'admin') {
-                    // 管理员：显示用户的流在远程视频区域
-                    const remoteStream = await this.zegoService.startPlayingStream(stream.streamID);
-                    
-                    if (this.remoteVideo?.nativeElement) {
-                      this.remoteVideo.nativeElement.srcObject = remoteStream;
-                      this.remoteVideo.nativeElement.autoplay = true;
-                      this.remoteVideo.nativeElement.playsInline = true;
-                      
-                      try {
-                        await this.remoteVideo.nativeElement.play();
-                        console.log('Admin: Remote video playback started');
-                      } catch (playError) {
-                        console.error('Admin: Error playing remote video:', playError);
-                       
-                      }
+                    try {
+                      await this.remoteVideo.nativeElement.play();
+                      console.log(`${this.roles}: Remote video playing`);
+                    } catch (playError) {
+                      console.error(`${this.roles}: Playback error:`, playError);
+                      this.handleAutoPlayError();
                     }
                   }
 
                   this.activeStreamId = stream.streamID;
                   
                 } catch (err) {
-                  console.error(`${this.roles}: Error in stream setup:`, err);
-                 
+                  console.error(`${this.roles}: Stream setup error:`, err);
                 }
               }
             } else if (updateType === 'DELETE') {
               for (const stream of streamList) {
-                console.log(`${this.roles}: Removing stream:`, stream.streamID);
                 if (stream.streamID === this.activeStreamId) {
                   if (this.remoteVideo?.nativeElement) {
                     this.remoteVideo.nativeElement.srcObject = null;
                   }
                   this.activeStreamId = null;
                 }
-                await this.zegoService.zegoEngine.stopPlayingStream(stream.streamID);
               }
             }
         });
 
-        // 监听发布状态
-        this.zegoService.zegoEngine.on('publisherStateUpdate', 
-          (streamID: string, state: string, errorCode: number, extendedData: string) => {
-            console.log(`${this.roles} Publisher state:`, { streamID, state, errorCode });
-            if (state === 'PUBLISHING' && errorCode === 0) {
-              console.log(`${this.roles}: Stream publishing successfully`);
-            } else if (errorCode !== 0) {
-              console.error(`${this.roles}: Publishing error:`, errorCode);
-            
-            }
-        });
-
       } catch (error) {
-        console.error(`${this.roles}: Error in startcall:`, error);
+        console.error(`${this.roles}: Call setup error:`, error);
       }
+    } else {
+      console.error('No token provided');
     }
   }
 
+  // 处理自动播放错误
+  private handleAutoPlayError() {
+    if (this.remoteVideo?.nativeElement) {
+      const videoElement = this.remoteVideo.nativeElement;
+      document.addEventListener('click', async () => {
+        try {
+          await videoElement.play();
+          console.log('Video playback recovered after user interaction');
+        } catch (error) {
+          console.error('Still cannot play video:', error);
+        }
+      }, { once: true });
+    }
+  }
+
+  // 离开房间
   async leaveRoom() {
     const result = await Swal.fire({
       title: 'Leave Room',
@@ -212,23 +199,21 @@ export class VideoContainerComponent implements OnInit {
       cancelButtonText: 'Cancel'
     });
 
-  if (result.isConfirmed) {
-    try {
-      if (this.activeStreamId) {
-        this.zegoService.zegoEngine.stopPlayingStream(this.activeStreamId);
-        this.activeStreamId = null;
+    if (result.isConfirmed) {
+      try {
+        // 使用现有的 endCall 方法
+        await this.zegoService.endCall(this.roomId);
+        
+        if (this.roles === 'user') {
+          window.close();
+        } else {
+          this.router.navigate(['/video-call']);
+        }
+      } catch (error) {
+        console.error('Error leaving room:', error);
       }
-      await this.zegoService.endCall(this.roomId);
-      if(this.roles === 'user'){
-           window.close();
-      }else{
-        this.router.navigate(['/video-call']);
-      }
-    } catch (error) {
-      console.error('Error leaving room:', error);
     }
   }
-}
   
   async getToken(userid:any, username:any ,roomID:any) :Promise<any>{
     const  requestData = { userID: userid, userName:username , roomID:roomID};  // Example parameters to send in POST request

@@ -67,7 +67,7 @@ export class VideoContainerComponent implements OnInit {
     
         
         if (this.roomId && this.userId && this.userName && this.roles) {
-          this.getToken(this.userId, this.userName, this.roomId);
+             this.getToken(this.userId, this.userName, this.roomId);
         }else{
              alert("missing params to start call")
         }
@@ -142,9 +142,9 @@ export class VideoContainerComponent implements OnInit {
             if (updateType === 'ADD') {
               for (const stream of streamList) {
                 if (stream.userID !== this.userId) {
-                  const remoteStream = await this.zegoService.startPlayingStream(stream.streamID);
+                  this.remoteStream = await this.zegoService.startPlayingStream(stream.streamID);
                   if (this.remoteVideo?.nativeElement) {
-                    this.remoteVideo.nativeElement.srcObject = remoteStream;
+                    this.remoteVideo.nativeElement.srcObject = this.remoteStream;
                   }
                 }
               }

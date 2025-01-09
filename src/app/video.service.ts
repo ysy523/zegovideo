@@ -36,10 +36,7 @@ import { Subject } from 'rxjs';  // Import Subject from rxjs
     constructor() {
         this.initZegoEngine();
 
-        this.zegoEngine.on('roomStreamUpdate', (roomID: string, updateType: string, streamList: any[]) => {
-            this.streamUpdateSubject.next({ roomID, updateType, streamList });  // Emit stream updates
-          });
-      }
+    }
 
  initZegoEngine() {
     try {
@@ -47,6 +44,11 @@ import { Subject } from 'rxjs';  // Import Subject from rxjs
          this.appId,
          this.serverSecret
       );
+
+      this.zegoEngine.on('roomStreamUpdate', (roomID: string, updateType: string, streamList: any[]) => {
+        this.streamUpdateSubject.next({ roomID, updateType, streamList });  // Emit stream updates
+      });
+  
 
       const config = {
         logLevel: 'disable',

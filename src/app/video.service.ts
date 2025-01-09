@@ -38,6 +38,17 @@ import { environment } from '../environments/environment';
          this.appId,
          this.serverSecret
       );
+
+      const config = {
+        logLevel: 'disable',
+        remoteLogLevel: 'disable',
+        logURL: ''
+       };
+
+       this.zegoEngine.setLogConfig(config);
+
+      this.zegoEngine.setDebugVerbose(false)
+
       console.log('ZEGO Engine initialized successfully');
     } catch (error) {
       console.error('Failed to initialize ZEGO Engine:', error);

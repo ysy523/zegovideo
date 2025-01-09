@@ -98,32 +98,55 @@ export class VideoContainerComponent implements OnInit {
     try {
       console.log(`${this.roles} starting call in room:`, this.roomId);
 
-      if (this.roles) {
-        // 管理员：使用 startCall
-        const localStream = await this.zegoService.startCall(this.roomId, this.userId, token , this.roles);
+      if (this.roles === 'admin') {
+        const localStream = await this.zegoService.startCall(this.roomId, this.userId, token, this.roles);
         
+        // Show the admin's local stream in the local video element
         if (this.localVideo?.nativeElement) {
           this.localVideo.nativeElement.srcObject = localStream;
           console.log('Admin: Local preview set up');
         }
-      } 
-
-      // 监听流更新
-      this.zegoService.zegoEngine.on('roomStreamUpdate', 
-        async (roomID: string, updateType: string, streamList: any[]) => {
+        
+        // Listen for incoming streams (from user) to subscribe to
+        this.zegoService.zegoEngine.on('roomStreamUpdate', async (roomID: string, updateType: string, streamList: any[]) => {
           if (updateType === 'ADD') {
             for (const stream of streamList) {
-
-
-              const remoteStream = await this.zegoService.startPlayingStream(stream.streamID);
-              
-              if (this.remoteVideo?.nativeElement) {
-                this.remoteVideo.nativeElement.srcObject = remoteStream;
+              if (stream.userID !== this.userId) {  // Only subscribe to the user’s stream (not the admin's)
+                const remoteStream = await this.zegoService.startPlayingStream(stream.streamID);
+                if (this.remoteVideo?.nativeElement) {
+                  this.remoteVideo.nativeElement.srcObject = remoteStream;
+                  console.log('Admin: Subscribed to user stream');
+                }
               }
             }
           }
-      });
-
+        });
+      }
+  
+      if (this.roles === 'user') {
+        const localStream = await this.zegoService.startCall(this.roomId, this.userId, token, this.roles);
+  
+        // Show the user's local stream in the local video element
+        if (this.localVideo?.nativeElement) {
+          this.localVideo.nativeElement.srcObject = localStream;
+          console.log('User: Local preview set up');
+        }
+  
+        // Listen for incoming streams (from admin) to subscribe to
+        this.zegoService.zegoEngine.on('roomStreamUpdate', async (roomID: string, updateType: string, streamList: any[]) => {
+          if (updateType === 'ADD') {
+            for (const stream of streamList) {
+              if (stream.userID !== this.userId) {  // Only subscribe to the admin’s stream (not the user’s)
+                const remoteStream = await this.zegoService.startPlayingStream(stream.streamID);
+                if (this.remoteVideo?.nativeElement) {
+                  this.remoteVideo.nativeElement.srcObject = remoteStream;
+                  console.log('User: Subscribed to admin stream');
+                }
+              }
+            }
+          }
+        });
+      }
     } catch (error) {
       console.error('Call setup error:', error);
     }

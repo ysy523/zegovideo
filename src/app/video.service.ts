@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ZegoExpressEngine } from 'zego-express-engine-webrtc';
 import { environment } from '../environments/environment';
-
+import { Subject } from 'rxjs';  // Import Subject from rxjs
 @Injectable({
     providedIn: 'root'
   })
@@ -18,6 +18,11 @@ import { environment } from '../environments/environment';
     private serverSecret = environment.zegoCloud.serverSecret;
 
 
+    private streamUpdateSubject = new Subject<any>();  // Subject to emit stream updates
+    streamUpdate$ = this.streamUpdateSubject.asObservable();  // Observable for components to subscribe to
+
+
+
     deviceInfo = {
         cameras: [] as MediaDeviceInfo[],
         microphones: [] as MediaDeviceInfo[],
@@ -30,6 +35,10 @@ import { environment } from '../environments/environment';
 
     constructor() {
         this.initZegoEngine();
+
+        this.zegoEngine.on('roomStreamUpdate', (roomID: string, updateType: string, streamList: any[]) => {
+            this.streamUpdateSubject.next({ roomID, updateType, streamList });  // Emit stream updates
+          });
       }
 
  initZegoEngine() {

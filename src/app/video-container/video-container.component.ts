@@ -2,8 +2,9 @@ import { Component, Input ,OnInit,ElementRef, ViewChild} from '@angular/core';
 import { ActivatedRoute , Router } from '@angular/router';
 import { VideoService } from '../video.service';
 import { ApiService } from '../api.service';
-import { tap, catchError, throwError ,combineLatest } from 'rxjs';
+import { tap, catchError, throwError ,combineLatest ,Subject } from 'rxjs';
 import Swal from 'sweetalert2';
+import { takeUntil } from 'rxjs/operators';  // Import takeUntil to handle cleanup
 
 @Component({
   selector: 'app-video-container',
@@ -28,6 +29,7 @@ export class VideoContainerComponent implements OnInit {
 
   private streamUpdateHandler: any;
   private activeStreamId: string | null = null;
+  
 
   deviceInfo = {
     cameras: [] as MediaDeviceInfo[],
@@ -42,6 +44,10 @@ export class VideoContainerComponent implements OnInit {
   
   localStream :any
   remoteStream :any
+
+
+  private destroy$ = new Subject<void>();  // Subject to emit destruction signal
+  
 
   constructor(private route: ActivatedRoute,
               private router: Router ,
@@ -70,20 +76,20 @@ export class VideoContainerComponent implements OnInit {
     this.startDurationTimer();
 
 
-      // Listen for incoming streams (from user) to subscribe to
-      this.zegoService.zegoEngine.on('roomStreamUpdate', async (roomID: string, updateType: string, streamList: any[]) => {
-        if (updateType === 'ADD') {
-          for (const stream of streamList) {
-            if (stream.userID !== this.userId) {  // Only subscribe to the user’s stream (not the admin's)
-              this.remoteStream = await this.zegoService.startPlayingStream(stream.streamID);
-              if (this.remoteVideo?.nativeElement) {
-                this.remoteVideo.nativeElement.srcObject = this.remoteStream;
-                console.log('Admin: Subscribed to user stream');
-              }
-            }
-          }
-        }
-      });
+      // // Listen for incoming streams (from user) to subscribe to
+      // this.zegoService.zegoEngine.on('roomStreamUpdate', async (roomID: string, updateType: string, streamList: any[]) => {
+      //   if (updateType === 'ADD') {
+      //     for (const stream of streamList) {
+      //       if (stream.userID !== this.userId) {  // Only subscribe to the user’s stream (not the admin's)
+      //         this.remoteStream = await this.zegoService.startPlayingStream(stream.streamID);
+      //         if (this.remoteVideo?.nativeElement) {
+      //           this.remoteVideo.nativeElement.srcObject = this.remoteStream;
+      //           console.log('Admin: Subscribed to user stream');
+      //         }
+      //       }
+      //     }
+      //   }
+      // });
   }
 
   private startDurationTimer() {
@@ -102,6 +108,8 @@ export class VideoContainerComponent implements OnInit {
     if (this.durationTimer) {
       clearInterval(this.durationTimer);
     }
+    this.destroy$.next();  // Emit destruction signal
+    this.destroy$.complete();  // Complete the Subject to clean up
   }
 
   
@@ -125,16 +133,18 @@ export class VideoContainerComponent implements OnInit {
           console.log('Admin: Local preview set up');
         }
 
-
-          // Listen for incoming streams (from user) to subscribe to
-          this.zegoService.zegoEngine.on('roomStreamUpdate', async (roomID: string, updateType: string, streamList: any[]) => {
+        // Efficiently subscribe to roomStreamUpdate with rxjs
+        this.zegoService.streamUpdate$
+          .pipe(
+            takeUntil(this.destroy$)  // Automatically unsubscribe on component destroy
+          )
+          .subscribe(async ({ roomID, updateType, streamList }) => {
             if (updateType === 'ADD') {
               for (const stream of streamList) {
-                if (stream.userID !== this.userId) {  // Only subscribe to the user’s stream (not the admin's)
-                  this.remoteStream = await this.zegoService.startPlayingStream(stream.streamID);
+                if (stream.userID !== this.userId) {
+                  const remoteStream = await this.zegoService.startPlayingStream(stream.streamID);
                   if (this.remoteVideo?.nativeElement) {
-                    this.remoteVideo.nativeElement.srcObject = this.remoteStream;
-                    console.log('Admin: Subscribed to user stream');
+                    this.remoteVideo.nativeElement.srcObject = remoteStream;
                   }
                 }
               }

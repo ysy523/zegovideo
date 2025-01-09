@@ -64,7 +64,7 @@ import { environment } from '../environments/environment';
  
       
     } catch (error) {
-      console.error('Failed to start playing stream:', error);
+      alert('Failed to start playing stream: ' + error);
     }
   }
 

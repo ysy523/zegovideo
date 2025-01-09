@@ -96,9 +96,9 @@ export class VideoContainerComponent implements OnInit {
     try {
       console.log(`${this.roles} starting call in room:`, this.roomId);
 
-      if (this.roles === 'admin') {
+      if (this.roles) {
         // 管理员：使用 startCall
-        const localStream = await this.zegoService.startCall(this.roomId, this.userId, token);
+        const localStream = await this.zegoService.startCall(this.roomId, this.userId, token , this.roles);
         
         if (this.localVideo?.nativeElement) {
           this.localVideo.nativeElement.srcObject = localStream;
@@ -106,9 +106,7 @@ export class VideoContainerComponent implements OnInit {
           this.localVideo.nativeElement.playsInline = true;
           console.log('Admin: Local preview set up');
         }
-      } else{
-        await this.zegoService.startCallUser(this.roomId, this.userId, token);
-      }
+      } 
 
       // 监听流更新
       this.zegoService.zegoEngine.on('roomStreamUpdate', 
@@ -135,20 +133,20 @@ export class VideoContainerComponent implements OnInit {
 
   async leaveRoom() {
     try {
-      if (this.roles === 'admin') {
+      
         await this.zegoService.zegoEngine.stopPublishingStream();
         if (this.localVideo?.nativeElement) {
      
           this.localVideo.nativeElement.srcObject = null;
         }
-      }
+      
 
       if (this.remoteVideo?.nativeElement) {
         this.remoteVideo.nativeElement.srcObject = null;
       }
 
       await this.zegoService.zegoEngine.logoutRoom(this.roomId);
-      console.log('Left room:', this.roomId);
+      console.warn('Left room:', this.roomId);
 
       if (this.roles === 'admin') {
         this.router.navigate(['/video-call']);

@@ -73,7 +73,7 @@ import { environment } from '../environments/environment';
     }
   }
 
-  async startCall(roomID: string, userID: string ,token:any) {
+  async startCall(roomID: string, userID: string ,token:any ,roles:any) {
 
     try {
      // Check permissions first
@@ -92,8 +92,10 @@ import { environment } from '../environments/environment';
         audio: true
       }
     });
+
+    const streamID = `${roles}_${userID}}`;
     
-    await this.zegoEngine.startPublishingStream(userID, this.localStream);
+    await this.zegoEngine.startPublishingStream(streamID, this.localStream);
     return this.localStream;
   } catch (error) {
     console.error('Error in startCall:', error);

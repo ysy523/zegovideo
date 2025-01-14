@@ -2,7 +2,7 @@ import { Component, OnInit ,AfterViewInit,ElementRef, ViewChild  } from '@angula
 import { ZegoExpressEngine } from 'zego-express-engine-webrtc';
 import { HeaderComponent } from '../header/header.component';
 import { VideoContainerComponent } from '../video-container/video-container.component';
-import { ApiService } from '../api.service'; // Import the ApiService
+import { ApiService } from '../services/api.service'; // Import the ApiService
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
@@ -70,6 +70,8 @@ export class VideoCallComponent implements OnInit {
 
   inviteUrl = '';
 
+  isLoading: boolean = false; // Add a loading state
+
   searchTerm: string = '';
   currentPage: number = 1;
   itemsPerPage: number = 6;
@@ -79,11 +81,31 @@ export class VideoCallComponent implements OnInit {
   ngOnInit(): void {
     this.filteredUsers = [...this.users];
     this.updateDisplayedUsers();
+
+    this.getuserdetais();
   }
 
   get totalPages(): number {
     return Math.ceil(this.filteredUsers.length / this.itemsPerPage);
   }
+
+
+
+getuserdetais(){
+     this.isLoading = true; // Show loading indicator
+    this.apiService.getUsers().subscribe((response:any)=>{
+
+      if(response){
+        console.log("user details ===>",response.results)
+        this.isLoading = false;
+      }
+
+    
+    })
+
+}
+
+
 
   onSearch(): void {
     this.currentPage = 1;
@@ -105,10 +127,17 @@ export class VideoCallComponent implements OnInit {
     }
   }
 
+  refreshUsers(): void {
+    this.getuserdetais(); // Re-fetch the data
+  }
+
   private updateDisplayedUsers(): void {
+    
     const start = (this.currentPage - 1) * this.itemsPerPage;
     const end = start + this.itemsPerPage;
+     // Hide loading indicator
     this.displayedUsers = this.filteredUsers.slice(start, end);
+    
   }
 
   async getToken(userid:any, username:any ,roomID:any) :Promise<any>{

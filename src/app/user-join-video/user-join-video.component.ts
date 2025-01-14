@@ -1,13 +1,12 @@
 import { Component ,ViewChild,ElementRef } from '@angular/core';
 import { ActivatedRoute , Router } from '@angular/router';
-import { VideoService } from '../video.service';
-import { ApiService } from '../api.service';
+import { VideoService } from '../services/video.service';
+import { ApiService } from '../services/api.service';
 import { tap, catchError, throwError ,combineLatest } from 'rxjs';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-user-join-video',
-  imports: [],
   templateUrl: './user-join-video.component.html',
   styleUrl: './user-join-video.component.css'
 })

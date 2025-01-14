@@ -1,5 +1,8 @@
+
+<app-header></app-header>
+
 <div class="main-container">
-  <app-header></app-header>
+  
   
   <div class="user-list-container">
   
@@ -14,10 +17,20 @@
           class="search-input"
         >
       </div>
+   
     </div>
-
     <div class="user-list">
-      <h2>User List</h2>
+      <div class="list-header">
+        <h2>User List</h2>
+        <button 
+          (click)="refreshUsers()" 
+          [disabled]="isLoading"
+          class="refresh-button"
+        >
+          <i class="fas fa-sync-alt" [class.spinning]="isLoading"></i>
+          {{ isLoading ? 'Refreshing...' : 'Refresh' }}
+        </button>
+      </div>
 
       <div class="user-card" *ngFor="let user of displayedUsers">
         <div class="user-info">

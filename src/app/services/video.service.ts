@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ZegoExpressEngine } from 'zego-express-engine-webrtc';
-import { environment } from '../environments/environment';
-import { Subject } from 'rxjs';  // Import Subject from rxjs
+import { environment } from '../../environments/environment';
+import { async, Subject ,BehaviorSubject} from 'rxjs';  // Import Subject from rxjs
 @Injectable({
     providedIn: 'root'
   })
@@ -18,7 +18,7 @@ import { Subject } from 'rxjs';  // Import Subject from rxjs
     private serverSecret = environment.zegoCloud.serverSecret;
 
 
-    private streamUpdateSubject = new Subject<any>();  // Subject to emit stream updates
+    private streamUpdateSubject = new BehaviorSubject<any>(null);  // Subject to emit stream updates
     streamUpdate$ = this.streamUpdateSubject.asObservable();  // Observable for components to subscribe to
 
 
@@ -48,6 +48,8 @@ import { Subject } from 'rxjs';  // Import Subject from rxjs
       this.zegoEngine.on('roomStreamUpdate', (roomID: string, updateType: string, streamList: any[]) => {
         this.streamUpdateSubject.next({ roomID, updateType, streamList });  // Emit stream updates
       });
+
+
   
 
       const config = {
@@ -66,6 +68,10 @@ import { Subject } from 'rxjs';  // Import Subject from rxjs
     }
   }
 
+async getRoomUserList(roomID:any) : Promise<any> {
+  const userList = await this.zegoEngine.getRoomUserList(roomID);
+  return userList.length;
+}
 
   async startPlayingStream(streamID: string) {
     try {
@@ -137,7 +143,6 @@ private async checkPermissions() {
       throw new Error('Please grant camera and microphone permissions to use video call');
     }
   }
-
 
 
 async endCall(roomID: string) {

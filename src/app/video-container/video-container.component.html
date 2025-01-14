@@ -4,6 +4,7 @@
     <div class="header-bar">
       <div class="room-info">
         <span class="room-id">Room ID: {{ roomId }}</span>
+        <span class="room-id">RTotal guests in the room: {{ totalUsers }}</span>
       </div>
       <button class="leave-room-btn" (click)="leaveRoom()">
         <svg class="exit-icon" viewBox="0 0 24 24">
@@ -29,7 +30,10 @@
       </div>
     </div>
   </div>
+
 </div>
+
+
 
   <!-- 用户详情侧边栏 (现在在右侧) -->
  @if(roles === 'admin'){ <div class="user-sidebar">

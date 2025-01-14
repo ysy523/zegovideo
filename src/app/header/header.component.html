@@ -5,8 +5,8 @@
       </div>
       <nav class="navigation">
         <ul>
-          <li><a href="/" class="active">Home</a></li>
-     
+          <li>{{user.username}}</li>
+          <li><button class="logout-btn" (click)="logout()">Logout</button></li>
         </ul>
       </nav>
     </div>

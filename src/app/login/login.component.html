@@ -1,0 +1,45 @@
+<div class="content">
+    <div class="container">
+      <div class="row">
+        <!-- Image Section -->
+        <div class="image-section">
+          <img src="assets/images/login.png" alt="Login">
+        </div>
+  
+        <!-- Login Form Section -->
+        <div class="login-section">
+          <div class="login-form-container">
+            <div class="mb-4">
+              <h3>Sign In</h3>
+            </div>
+  
+           <!-- login.component.html -->
+            <form (ngSubmit)="onSubmit()">
+                <div>
+                <label for="username">Username:</label>
+                <input
+                    id="username"
+                    [(ngModel)]="credentials.username"
+                    name="username"
+                    type="text"
+                    required
+                />
+                </div>
+                <div>
+                <label for="password">Password:</label>
+                <input
+                    id="password"
+                    [(ngModel)]="credentials.password"
+                    name="password"
+                    type="password"
+                    required
+                />
+                </div>
+                <button type="submit">Login</button>
+            </form>
+            <p class="text-danger">{{''}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

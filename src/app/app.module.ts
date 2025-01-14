@@ -1,16 +1,18 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
-import { AppComponent } from './app.component';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { RouterModule } from '@angular/router';
 import { AppRoutingModule } from './app-routing.module';
-import { HttpClientModule } from '@angular/common/http';  // Import HttpClientModule
-import { RouterModule } from '@angular/router'; // Import RouterModule
+
+import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
 import { VideoCallComponent } from './video-call/video-call.component';
 import { VideoContainerComponent } from './video-container/video-container.component';
 import { UserJoinVideoComponent } from './user-join-video/user-join-video.component';
-import { ApiService } from './api.service';  // Import ApiService
-import { FormsModule } from '@angular/forms';
+import { LoginComponent } from './login/login.component';
+import { ApiService } from './services/api.service';
 
 @NgModule({
   declarations: [
@@ -18,18 +20,19 @@ import { FormsModule } from '@angular/forms';
     HeaderComponent,
     VideoCallComponent,
     VideoContainerComponent,
-    UserJoinVideoComponent
+    UserJoinVideoComponent,
+    LoginComponent
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA], // Add this
   imports: [
     BrowserModule,
-    HttpClientModule,
     CommonModule,
-    RouterModule, // Add RouterModule here
-    AppRoutingModule,
-    FormsModule
+    FormsModule,
+    HttpClientModule,
+    RouterModule,
+    AppRoutingModule
   ],
   providers: [ApiService],
-  bootstrap: [AppComponent] // Bootstraps AppComponent
+  bootstrap: [AppComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AppModule { }

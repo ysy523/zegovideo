@@ -1,7 +1,7 @@
 import { Component, Input ,OnInit,ElementRef, ViewChild} from '@angular/core';
 import { ActivatedRoute , Router } from '@angular/router';
-import { VideoService } from '../video.service';
-import { ApiService } from '../api.service';
+import { VideoService } from '../services/video.service';
+import { ApiService } from '../services/api.service';
 import { tap, catchError, throwError ,combineLatest ,Subject } from 'rxjs';
 import Swal from 'sweetalert2';
 import { takeUntil } from 'rxjs/operators';  // Import takeUntil to handle cleanup
@@ -23,6 +23,7 @@ export class VideoContainerComponent implements OnInit {
   data:any;
   errorMessage:any;
   roles:any;
+  totalUsers: number = 0;
 
   callDuration: string = '00:00';
   private durationTimer: any;
@@ -83,6 +84,7 @@ export class VideoContainerComponent implements OnInit {
           )
           .subscribe(async ({ roomID, updateType, streamList }) => {
             if (updateType === 'ADD') {
+              this.totalUsers += streamList.length || 0;
               for (const stream of streamList) {
                 if (stream.userID !== this.userId) {
                   this.remoteStream = await this.zegoService.startPlayingStream(stream.streamID);
@@ -91,9 +93,11 @@ export class VideoContainerComponent implements OnInit {
                   }
                 }
               }
+            }else if(updateType === 'DELETE'){  
+              this.totalUsers -= streamList.length || 0;
             }
           });
-        }
+        }       
   }
 
   private startDurationTimer() {
@@ -116,9 +120,6 @@ export class VideoContainerComponent implements OnInit {
     this.destroy$.complete();  // Complete the Subject to clean up
   }
 
-  
-
-
   async startcall(token: any) {
     if (!token) {
       console.error('No token provided');
@@ -134,6 +135,9 @@ export class VideoContainerComponent implements OnInit {
         // Show the admin's local stream in the local video element
         if (this.localVideo?.nativeElement) {
           this.localVideo.nativeElement.srcObject = this.localStream;
+
+          localStorage.setItem('roomID', this.roomId);
+          localStorage.setItem('userID', this.userId);
           console.log('Admin: Local preview set up');
         }
 
@@ -143,7 +147,9 @@ export class VideoContainerComponent implements OnInit {
             takeUntil(this.destroy$)  // Automatically unsubscribe on component destroy
           )
           .subscribe(async ({ roomID, updateType, streamList }) => {
+
             if (updateType === 'ADD') {
+              this.totalUsers += streamList.length || 0;
               for (const stream of streamList) {
                 if (stream.userID !== this.userId) {
                   this.remoteStream = await this.zegoService.startPlayingStream(stream.streamID);
@@ -152,6 +158,8 @@ export class VideoContainerComponent implements OnInit {
                   }
                 }
               }
+            } else if (updateType === 'DELETE') {
+              this.totalUsers -= streamList.length || 0;
             }
           });
         
@@ -190,12 +198,17 @@ export class VideoContainerComponent implements OnInit {
           await this.zegoService.zegoEngine.stopPlayingStream(this.remoteStream);
           this.remoteStream = null;
         }
+
+        localStorage.removeItem('roomID')
+        localStorage.removeItem('userID')
      
         if(this.roles === 'user'){
              window.close();
         }else{
           this.router.navigate(['/video-call']);
         }
+
+        
       } catch (error) {
         console.error('Error leaving room:', error);
       }

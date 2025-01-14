@@ -27,7 +27,9 @@ export class AppComponent implements OnInit{
         this.router.events.subscribe((event) => {
           if (event instanceof NavigationEnd) {
               
-            this.url = event.url;
+
+            const isProtectedRoute = !['/login', '/join'].includes(event.url); // Add more public r
+            this.url = isProtectedRoute;
            
           }
         });

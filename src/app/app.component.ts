@@ -17,28 +17,29 @@ export class AppComponent implements OnInit{
   url :any;
   constructor(private authService: AuthService, private router: Router) {}
 
-  ngOnInit() {
+   ngOnInit(): void {
+     
+   }
  // Save the current route whenever it changes
 
 
 
-    this.authService.autoLogin().subscribe((user) => {
-      if (user) {
-        this.router.events.subscribe((event) => {
-          if (event instanceof NavigationEnd) {
+  //   this.authService.autoLogin().subscribe((user) => {
+  //     if (user) {
+  //       this.router.events.subscribe((event) => {
+  //         if (event instanceof NavigationEnd) {
               
 
-            const isProtectedRoute = !['/login', '/join'].includes(event.url); // Add more public r
-            this.url = isProtectedRoute;
+  //           const isProtectedRoute = !['/login', '/join'].includes(event.url); // Add more public r
+  //           this.url = isProtectedRoute;
            
-          }
-        });
+  //         }
+  //       });
 
-        this.router.navigate([this.url]);
+  //       this.router.navigate([this.url]);
        
-      }else{
-        this.router.navigate(['/login']);
-      }
-    });
-  }
+  //     }else{
+  //       this.router.navigate(['/login']);
+  //     }
+  //   });
 }
